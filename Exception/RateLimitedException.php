@@ -23,7 +23,7 @@ class RateLimitedException extends LocalizedException
     public function __construct(
         Phrase $phrase,
         private readonly ?int $retryAfterSeconds = null,
-        ?\Throwable $cause = null,
+        ?\Exception $cause = null,
         int $code = 0,
     ) {
         parent::__construct($phrase, $cause, $code);
