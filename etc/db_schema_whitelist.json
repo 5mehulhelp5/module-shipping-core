@@ -1,0 +1,191 @@
+{
+    "shubo_shipping_shipment": {
+        "column": {
+            "shipment_id": true,
+            "magento_shipment_id": true,
+            "order_id": true,
+            "merchant_id": true,
+            "carrier_code": true,
+            "carrier_tracking_id": true,
+            "client_tracking_code": true,
+            "status": true,
+            "pickup_address_id": true,
+            "delivery_address_json": true,
+            "parcel_weight_grams": true,
+            "parcel_value_cents": true,
+            "cod_enabled": true,
+            "cod_amount_cents": true,
+            "cod_collected_at": true,
+            "cod_reconciled_at": true,
+            "label_url": true,
+            "label_pdf_stored_at": true,
+            "created_at": true,
+            "updated_at": true,
+            "last_polled_at": true,
+            "next_poll_at": true,
+            "poll_strategy": true,
+            "webhook_secret": true,
+            "failed_at": true,
+            "failure_reason": true,
+            "metadata_json": true
+        },
+        "index": {
+            "SHUBO_SHIPPING_SHIPMENT_CARRIER_CODE_CARRIER_TRACKING_ID": true,
+            "SHUBO_SHIPPING_SHIPMENT_MAGENTO_SHIPMENT_ID": true,
+            "SHUBO_SHIPPING_SHIPMENT_ORDER_ID": true,
+            "SHUBO_SHIPPING_SHIPMENT_MERCHANT_ID": true,
+            "SHUBO_SHIPPING_SHIPMENT_STATUS_NEXT_POLL_AT": true,
+            "SHUBO_SHIPPING_SHIPMENT_MERCHANT_ID_CREATED_AT": true,
+            "SHUBO_SHIPPING_SHIPMENT_CARRIER_CODE_STATUS": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "SHUBO_SHIPPING_SHIPMENT_CARRIER_CODE_CLIENT_TRACKING_CODE": true,
+            "SHUBO_SHIPPING_SHIPMENT_ORDER_ID_SALES_ORDER_ENTITY_ID": true,
+            "SHUBO_SHIPPING_SHIPMENT_MERCHANT_ID_SHUBO_MERCHANT_MERCHANT_ID": true,
+            "SHUBO_SHPP_SHIPMENT_MAGENTO_SHIPMENT_ID_SALES_SHIPMENT_ENTT_ID": true
+        }
+    },
+    "shubo_shipping_shipment_event": {
+        "column": {
+            "event_id": true,
+            "shipment_id": true,
+            "carrier_code": true,
+            "event_type": true,
+            "carrier_status_raw": true,
+            "normalized_status": true,
+            "occurred_at": true,
+            "received_at": true,
+            "source": true,
+            "external_event_id": true,
+            "raw_payload_json": true
+        },
+        "index": {
+            "SHUBO_SHIPPING_SHIPMENT_EVENT_SHIPMENT_ID_RECEIVED_AT": true,
+            "SHUBO_SHIPPING_SHIPMENT_EVENT_RECEIVED_AT": true,
+            "SHUBO_SHIPPING_SHIPMENT_EVENT_EVENT_TYPE": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "SHUBO_SHIPPING_SHIPMENT_EVENT_CARRIER_CODE_EXTERNAL_EVENT_ID": true,
+            "FK_0AD9C32F6E89049251E1BDA5EC2033DA": true
+        }
+    },
+    "shubo_shipping_carrier_config": {
+        "column": {
+            "carrier_code": true,
+            "is_enabled": true,
+            "is_sandbox": true,
+            "priority": true,
+            "credentials_encrypted": true,
+            "capabilities_cache_json": true,
+            "rate_limit_rpm": true,
+            "timeout_seconds": true,
+            "updated_at": true
+        },
+        "index": {
+            "SHUBO_SHIPPING_CARRIER_CONFIG_IS_ENABLED_PRIORITY": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "shubo_shipping_geo_cache": {
+        "column": {
+            "geo_id": true,
+            "carrier_code": true,
+            "geo_type": true,
+            "external_id": true,
+            "name": true,
+            "name_en": true,
+            "parent_id": true,
+            "latitude": true,
+            "longitude": true,
+            "metadata_json": true,
+            "refreshed_at": true
+        },
+        "index": {
+            "SHUBO_SHIPPING_GEO_CACHE_CARRIER_CODE_GEO_TYPE_PARENT_ID": true,
+            "SHUBO_SHIPPING_GEO_CACHE_GEO_TYPE_NAME": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "SHUBO_SHIPPING_GEO_CACHE_CARRIER_CODE_GEO_TYPE_EXTERNAL_ID": true
+        }
+    },
+    "shubo_shipping_invoice_import": {
+        "column": {
+            "import_id": true,
+            "carrier_code": true,
+            "period_start": true,
+            "period_end": true,
+            "source_file_hash": true,
+            "source_file_path": true,
+            "source_format": true,
+            "total_lines": true,
+            "matched_lines": true,
+            "unmatched_lines": true,
+            "disputed_lines": true,
+            "status": true,
+            "imported_at": true,
+            "reconciled_at": true,
+            "imported_by_admin_id": true,
+            "error_message": true
+        },
+        "index": {
+            "SHUBO_SHIPPING_INVOICE_IMPORT_CARRIER_CODE_STATUS_PERIOD_END": true,
+            "SHUBO_SHIPPING_INVOICE_IMPORT_STATUS": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "SHUBO_SHIPPING_INVOICE_IMPORT_CARRIER_CODE_SOURCE_FILE_HASH": true
+        }
+    },
+    "shubo_shipping_invoice_line": {
+        "column": {
+            "line_id": true,
+            "import_id": true,
+            "carrier_tracking_id": true,
+            "external_line_id": true,
+            "shipment_id": true,
+            "expected_cod_cents": true,
+            "reported_cod_cents": true,
+            "reported_fee_cents": true,
+            "reported_vat_cents": true,
+            "match_status": true,
+            "dispute_reason": true,
+            "matched_at": true,
+            "raw_line_json": true
+        },
+        "index": {
+            "SHUBO_SHIPPING_INVOICE_LINE_IMPORT_ID": true,
+            "SHUBO_SHIPPING_INVOICE_LINE_SHIPMENT_ID": true,
+            "SHUBO_SHIPPING_INVOICE_LINE_CARRIER_TRACKING_ID": true,
+            "SHUBO_SHIPPING_INVOICE_LINE_MATCH_STATUS": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "FK_BF1C07527C005A2BAF1D8C6D17295555": true,
+            "FK_52579110A2172D9AE671908B8EF9D291": true
+        }
+    },
+    "shubo_shipping_circuit_breaker": {
+        "column": {
+            "carrier_code": true,
+            "state": true,
+            "failure_count": true,
+            "success_count_since_halfopen": true,
+            "last_failure_at": true,
+            "last_success_at": true,
+            "opened_at": true,
+            "cooldown_until": true,
+            "updated_at": true
+        },
+        "index": {
+            "SHUBO_SHIPPING_CIRCUIT_BREAKER_STATE": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    }
+}
