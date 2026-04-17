@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace Shubo\ShippingCore\Model\Resilience;
 
-use Magento\Framework\App\CacheInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use Shubo\ShippingCore\Api\RateLimiterInterface;
@@ -18,9 +17,21 @@ use Shubo\ShippingCore\Model\ResourceModel\RateLimitState;
 /**
  * Per-carrier token-bucket rate limiter.
  *
- * Primary backing: Magento cache frontend (Redis in production). Fallback:
- * {@see RateLimitState} resource model — an atomic conditional UPDATE that
- * prevents over-issue under concurrent callers.
+ * Backing store: MySQL via {@see RateLimitState}. Every token acquisition
+ * runs through a short transaction that performs
+ * `INSERT ... ON DUPLICATE KEY UPDATE` followed by `SELECT ... FOR UPDATE`,
+ * which serializes concurrent callers on the per-carrier row and makes
+ * over-issue provably impossible.
+ *
+ * An earlier revision of this class tried a Redis-first fast path through
+ * {@see \Magento\Framework\App\CacheInterface::load()} / `save()`. That
+ * pattern is TOCTOU-racy — `CacheInterface` exposes no atomic increment
+ * primitive — and `RateLimiterConcurrencyTest` demonstrated 20×3 parallel
+ * workers routinely over-issuing 60 tokens against a 30-rpm cap (up to
+ * 2× the limit). The fast path was removed in favor of the DB path,
+ * which the original code already used as a fallback. Using raw Redis
+ * `INCR`/`EXPIRE` would bypass the Cache abstraction entirely, so we
+ * stay DB-only until the benefit justifies that coupling.
  *
  * Window is 1 minute aligned to the epoch (`floor(time()/60)*60`).
  * Default RPM is read from `shubo_shipping/rate_limit/default_rpm` (60).
@@ -32,7 +43,6 @@ class RateLimiter implements RateLimiterInterface
     private const BLOCKING_TICK_MS = 100;
 
     public function __construct(
-        private readonly CacheInterface $cache,
         private readonly RateLimitState $dbResource,
         private readonly ScopeConfigInterface $scopeConfig,
         private readonly DateTime $dateTime,
@@ -45,26 +55,26 @@ class RateLimiter implements RateLimiterInterface
     {
         $rpm = $this->getRpm();
         $now = $this->nowTs();
-        $key = $this->cacheKey($carrierCode, $now);
 
-        // Redis path (best-effort).
         try {
-            $existing = $this->cache->load($key);
-            $used = $existing === false || $existing === null ? 0 : (int)$existing;
-            if ($used + $tokens > $rpm) {
-                $this->logger->logRateLimit($carrierCode, max(0, $rpm - $used));
-                return false;
-            }
-            $this->cache->save((string)($used + $tokens), $key, [], 60);
-            $this->logger->logRateLimit($carrierCode, max(0, $rpm - ($used + $tokens)));
-            return true;
+            $ok = $this->dbResource->incrementTokens($carrierCode, $tokens, $rpm, $now);
         } catch (\Throwable $e) {
+            // DB is the only path — log and fail closed so callers don't
+            // accidentally overwhelm the carrier on the way to a real
+            // outage recovery.
             $this->logger->logRateLimit($carrierCode, -1);
+            return false;
         }
 
-        // DB fallback path.
-        $ok = $this->dbResource->incrementTokens($carrierCode, $tokens, $rpm, $now);
-        $this->logger->logRateLimit($carrierCode, $ok ? 0 : -1);
+        // `tokens_remaining` is a rough figure for the structured log —
+        // it's read without the row lock the increment just held, so it
+        // may already drift by the time the log line is written. The
+        // acquire decision has already been made atomically above.
+        $remaining = $ok
+            ? max(0, $rpm - $this->dbResource->fetchTokensUsed($carrierCode, $now))
+            : 0;
+        $this->logger->logRateLimit($carrierCode, $remaining);
+
         return $ok;
     }
 
@@ -86,17 +96,7 @@ class RateLimiter implements RateLimiterInterface
 
     public function windowTokens(string $carrierCode): int
     {
-        $now = $this->nowTs();
-        $key = $this->cacheKey($carrierCode, $now);
-        try {
-            $existing = $this->cache->load($key);
-            if ($existing === false || $existing === null) {
-                return 0;
-            }
-            return (int)$existing;
-        } catch (\Throwable) {
-            return $this->dbResource->fetchTokensUsed($carrierCode, $now);
-        }
+        return $this->dbResource->fetchTokensUsed($carrierCode, $this->nowTs());
     }
 
     private function getRpm(): int
@@ -106,12 +106,6 @@ class RateLimiter implements RateLimiterInterface
             return self::DEFAULT_RPM;
         }
         return (int)$value;
-    }
-
-    private function cacheKey(string $carrierCode, int $nowTs): string
-    {
-        $windowEpoch = $nowTs - ($nowTs % 60);
-        return 'shubo_shipping_rl_' . $carrierCode . '_' . $windowEpoch;
     }
 
     private function nowTs(): int

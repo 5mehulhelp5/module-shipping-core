@@ -12,11 +12,16 @@ use Magento\Framework\Model\AbstractModel;
 use Shubo\ShippingCore\Model\ResourceModel\RateLimitState as RateLimitStateResource;
 
 /**
- * Per-carrier rate-limit window state (DB fallback path for the token
- * bucket). Not exposed via Api/ — internal to the rate limiter.
+ * Per-carrier rate-limit window state. Not exposed via Api/ — internal to
+ * the rate limiter.
  *
- * Primary backing is Redis via {@see \Magento\Framework\App\CacheInterface};
- * this model is used only when the cache backend is unavailable.
+ * Persisted in `shubo_shipping_rate_limit`. Acquisition goes through
+ * {@see \Shubo\ShippingCore\Model\ResourceModel\RateLimitState::incrementTokens()},
+ * which serializes concurrent callers on this row via a short
+ * transaction + `SELECT ... FOR UPDATE`. An earlier design used a
+ * Redis-backed cache as a fast path, but `CacheInterface` exposes no
+ * atomic increment primitive and the load/save pattern over-issued
+ * tokens under concurrency; see RateLimiter's class docblock.
  */
 class RateLimitState extends AbstractModel
 {
