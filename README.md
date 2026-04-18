@@ -1,5 +1,7 @@
 # Shubo_ShippingCore
 
+[![CI](https://github.com/nshubitidze/module-shipping-core/actions/workflows/ci.yml/badge.svg)](https://github.com/nshubitidze/module-shipping-core/actions/workflows/ci.yml)
+
 Carrier-agnostic shipping orchestration framework for Magento 2 marketplaces and multi-vendor stores.
 
 `Shubo_ShippingCore` is the foundation module that provides common abstractions — a pluggable carrier-adapter interface, shipment orchestration, resilience primitives (circuit breaker, retry, rate limiting, idempotency), a polling scheduler for carriers without webhooks, a webhook dispatcher for carriers that have them, and an invoice reconciliation framework.

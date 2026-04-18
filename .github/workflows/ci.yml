@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: Quality (PHP ${{ matrix.php-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: ['8.1', '8.2', '8.3', '8.4']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP ${{ matrix.php-version }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: mbstring, intl, xml, dom, bcmath, curl, pdo_mysql, gd, fileinfo, simplexml, sockets, soap
+          tools: composer:v2
+          coverage: none
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache
+          key: composer-php${{ matrix.php-version }}-${{ hashFiles('composer.json') }}
+          restore-keys: |
+            composer-php${{ matrix.php-version }}-
+            composer-
+
+      - name: Unpin platform.php for matrix resolution
+        # composer.json pins config.platform.php to 8.4.0 for local-dev ergonomics;
+        # in CI we let the matrix PHP drive resolution so every supported version
+        # is actually exercised against real dependencies.
+        run: composer config --unset platform.php
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: PHPStan
+        run: vendor/bin/phpstan analyse --no-progress
+
+      - name: PHPCS
+        run: vendor/bin/phpcs
+
+      - name: PHPUnit
+        run: vendor/bin/phpunit --colors=never
