@@ -6,13 +6,39 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
-    <!-- Api interface bindings (Phase 3 scope) -->
+    <!-- Api interface bindings (Phase 3 + Phase 4) -->
     <preference for="Shubo\ShippingCore\Api\CircuitBreakerInterface"
                 type="Shubo\ShippingCore\Model\Resilience\CircuitBreaker"/>
     <preference for="Shubo\ShippingCore\Api\RateLimiterInterface"
                 type="Shubo\ShippingCore\Model\Resilience\RateLimiter"/>
     <preference for="Shubo\ShippingCore\Api\Data\CircuitBreakerStateInterface"
                 type="Shubo\ShippingCore\Model\Data\CircuitBreakerState"/>
+
+    <!-- Phase 4: Carrier registry + shipment orchestrator + repository -->
+    <preference for="Shubo\ShippingCore\Api\CarrierRegistryInterface"
+                type="Shubo\ShippingCore\Model\Carrier\CarrierRegistry"/>
+    <preference for="Shubo\ShippingCore\Api\ShipmentOrchestratorInterface"
+                type="Shubo\ShippingCore\Model\Orchestrator\ShipmentOrchestrator"/>
+    <preference for="Shubo\ShippingCore\Api\ShipmentRepositoryInterface"
+                type="Shubo\ShippingCore\Model\Shipment\ShipmentRepository"/>
+    <preference for="Shubo\ShippingCore\Api\Data\ShipmentInterface"
+                type="Shubo\ShippingCore\Model\Data\Shipment"/>
+    <preference for="Shubo\ShippingCore\Api\Data\Search\ShipmentSearchResultsInterface"
+                type="Shubo\ShippingCore\Model\Data\ShipmentSearchResults"/>
+
+    <!--
+        Carrier registry composition — adapter modules register themselves
+        by appending to the `gateways` / `capabilities` arrays from their
+        own di.xml (see design doc section 7.3). Core ships the empty map
+        so the registry resolves even when no adapter is installed, which
+        keeps the orchestrator testable in isolation.
+    -->
+    <type name="Shubo\ShippingCore\Model\Carrier\CarrierRegistry">
+        <arguments>
+            <argument name="gateways" xsi:type="array"/>
+            <argument name="capabilities" xsi:type="array"/>
+        </arguments>
+    </type>
 
     <!-- Dedicated log channel: var/log/shubo_shipping.log. Mirrors the
          Shubo_Payout pattern (app/code/Shubo/Payout/etc/di.xml:42-55). -->

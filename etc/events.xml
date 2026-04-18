@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+    Copyright © Shubo. All rights reserved.
+    See LICENSE file for license details.
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+
+    <!--
+        When a Magento shipment is saved, the observer dispatches to the
+        orchestrator. Operation is idempotent on client_tracking_code.
+    -->
+    <event name="sales_order_shipment_save_after">
+        <observer name="shubo_shipping_core_create_shipment"
+                  instance="Shubo\ShippingCore\Observer\CreateShipmentOnMagentoShipment"/>
+    </event>
+
+    <!--
+        When a Magento order is cancelled, cancel any non-terminal Core
+        shipments tied to that order.
+    -->
+    <event name="order_cancel_after">
+        <observer name="shubo_shipping_core_cancel_shipment"
+                  instance="Shubo\ShippingCore\Observer\CancelShipmentOnOrderCancel"/>
+    </event>
+
+</config>

@@ -37,8 +37,18 @@ use Shubo\ShippingCore\Model\Logging\StructuredLogger;
  */
 class RetryPolicy
 {
-    private const MAX_ATTEMPTS = 5;
+    public const MAX_ATTEMPTS = 5;
     private const BACKOFF_CAP_MS = 60_000;
+
+    /**
+     * Return the configured maximum attempts so callers (e.g. the
+     * orchestrator's DLQ event payload) can report it without duplicating
+     * the constant.
+     */
+    public static function maxAttempts(): int
+    {
+        return self::MAX_ATTEMPTS;
+    }
 
     /** @var list<int> Base delays in ms for attempts 1..5. */
     private const BASE_DELAYS_MS = [1_000, 2_000, 4_000, 8_000, 16_000];

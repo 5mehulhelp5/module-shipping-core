@@ -6,6 +6,7 @@ parameters:
         - Api
         - Exception
         - Model
+        - Observer
     excludePaths:
         - Test/*
         - vendor/*
