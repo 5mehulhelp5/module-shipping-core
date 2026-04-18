@@ -26,17 +26,29 @@
     <preference for="Shubo\ShippingCore\Api\Data\Search\ShipmentSearchResultsInterface"
                 type="Shubo\ShippingCore\Model\Data\ShipmentSearchResults"/>
 
+    <!-- Phase 6: Rate quote service (carrier-agnostic aggregator) -->
+    <preference for="Shubo\ShippingCore\Api\RateQuoteServiceInterface"
+                type="Shubo\ShippingCore\Model\Carrier\RateQuoteService"/>
+
     <!--
         Carrier registry composition — adapter modules register themselves
         by appending to the `gateways` / `capabilities` arrays from their
-        own di.xml (see design doc section 7.3). Core ships the empty map
-        so the registry resolves even when no adapter is installed, which
-        keeps the orchestrator testable in isolation.
+        own di.xml (see design doc section 7.3). Core ships the built-in
+        flat-rate adapter (Phase 6) so a freshly-installed marketplace has
+        at least one working carrier out of the box.
+
+        External adapters (e.g. a future Shubo_TrackingsGe) register
+        themselves by ADDING to these arrays from their own di.xml. They
+        MUST NOT redeclare the same `shuboflat` key here.
     -->
     <type name="Shubo\ShippingCore\Model\Carrier\CarrierRegistry">
         <arguments>
-            <argument name="gateways" xsi:type="array"/>
-            <argument name="capabilities" xsi:type="array"/>
+            <argument name="gateways" xsi:type="array">
+                <item name="shuboflat" xsi:type="object">Shubo\ShippingCore\Model\Carrier\FlatRateGateway</item>
+            </argument>
+            <argument name="capabilities" xsi:type="array">
+                <item name="shuboflat" xsi:type="object">Shubo\ShippingCore\Model\Carrier\FlatRateCapabilities</item>
+            </argument>
         </arguments>
     </type>
 

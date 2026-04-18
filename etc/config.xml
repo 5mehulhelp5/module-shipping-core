@@ -21,5 +21,31 @@
                 <default_rpm>60</default_rpm>
             </rate_limit>
         </shubo_shipping>
+
+        <!--
+            Shubo Flat Rate carrier (Phase 6).
+
+            Ships disabled by default so Core's composer install does not
+            suddenly add a flat-rate option to live checkouts. Operators
+            enable via Stores -> Configuration -> Sales -> Shipping Methods
+            -> Shubo Flat Rate.
+
+            Code is `shuboflat` (no underscore) — the observer at
+            Shubo\ShippingCore\Observer\CreateShipmentOnMagentoShipment
+            splits Magento's shipping_method on `_` to extract the carrier
+            code; an underscore in the carrier code would break that split.
+        -->
+        <carriers>
+            <shuboflat>
+                <active>0</active>
+                <title>Shubo Flat Rate</title>
+                <name>Standard</name>
+                <price>5.00</price>
+                <sallowspecific>0</sallowspecific>
+                <sort_order>10</sort_order>
+                <model>Shubo\ShippingCore\Model\Carrier\MagentoShippingMethod</model>
+                <specificerrmsg>This shipping method is not available.</specificerrmsg>
+            </shuboflat>
+        </carriers>
     </default>
 </config>
