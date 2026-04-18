@@ -1,0 +1,16 @@
+includes:
+    - vendor/bitexpert/phpstan-magento/extension.neon
+parameters:
+    level: 8
+    paths:
+        - Api
+        - Exception
+        - Model
+    excludePaths:
+        - Test/*
+        - vendor/*
+    treatPhpDocTypesAsCertain: false
+    # bitexpert/phpstan-magento resolves most Magento classes via its
+    # autoloader, but a handful of framework classes aren't available
+    # without a full Magento install — silence those to keep level 8.
+    ignoreErrors: []

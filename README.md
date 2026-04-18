@@ -6,6 +6,23 @@ Carrier-agnostic shipping orchestration framework for Magento 2 marketplaces and
 
 Per-carrier adapters (e.g. `Shubo_ShippingTrackings`, `Shubo_ShippingWoltDrive`, `Shubo_ShippingDelivo`) are shipped as separate modules that plug into Core.
 
+## Development
+
+The module ships a standalone composer setup so the three quality gates can run
+outside of a full Magento install. From a clean checkout:
+
+```bash
+composer install
+composer phpunit     # or vendor/bin/phpunit
+composer phpstan     # or vendor/bin/phpstan analyse
+composer phpcs       # or vendor/bin/phpcs
+```
+
+`composer install` pulls `magento/framework` from the open-source
+[Mage-OS mirror](https://mirror.mage-os.org/) — no Adobe Commerce
+credentials required. PHP is pinned to `8.4.0` via `config.platform.php`
+to match the runtime; the CI matrix exercises 8.1 through 8.4.
+
 ## Status
 
 **Early development.** APIs are not yet stable. This README will be fleshed out in the v1.0.0 release. See `docs/design/shipping-core.md` in the downstream integration project for the current design document.

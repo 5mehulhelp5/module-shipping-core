@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<ruleset name="shipping-core">
+    <description>Shubo_ShippingCore coding standard (Magento2 + project strictness)</description>
+    <rule ref="Magento2"/>
+    <file>.</file>
+    <exclude-pattern>vendor/*</exclude-pattern>
+    <exclude-pattern>Test/Integration/*_fixtures/*</exclude-pattern>
+    <arg name="colors"/>
+    <arg name="extensions" value="php,phtml"/>
+    <!--
+        Warnings are not gating: tests and internal classes intentionally
+        skip some docblock rules that the Magento2 standard nudges for.
+        Errors remain strict.
+    -->
+    <arg name="warning-severity" value="0"/>
+</ruleset>
