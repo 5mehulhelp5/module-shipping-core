@@ -79,4 +79,5 @@ namespace Shubo\ShippingCore\Model\ResourceModel\Shipment {
         }
     }
 }
+
 // phpcs:enable

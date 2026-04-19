@@ -97,5 +97,4 @@ class Shipment extends AbstractDb
         }
         return parent::_afterSave($object);
     }
-
 }
