@@ -91,4 +91,22 @@
         </arguments>
     </type>
 
+    <!--
+        Phase 5b: Webhook dispatcher.
+
+        Adapter modules that opt into webhooks register their handler by
+        appending to the `handlers` array from their own di.xml (see design
+        doc §8). Core ships an empty map here so the dispatcher boots with
+        zero carriers and an unknown-carrier lookup short-circuits to 404
+        instead of blowing up.
+    -->
+    <preference for="Shubo\ShippingCore\Api\WebhookReceiverInterface"
+                type="Shubo\ShippingCore\Model\Webhook\WebhookReceiver"/>
+
+    <type name="Shubo\ShippingCore\Model\Webhook\WebhookDispatcher">
+        <arguments>
+            <argument name="handlers" xsi:type="array"/>
+        </arguments>
+    </type>
+
 </config>

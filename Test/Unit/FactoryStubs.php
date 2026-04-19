@@ -23,6 +23,21 @@ declare(strict_types=1);
 // phpcs:disable PSR1.Files.SideEffects
 // phpcs:disable Squiz.Classes.ClassFileName
 // phpcs:disable Magento2.NamingConvention.ReservedWords.ForbiddenAsNameSpace
+namespace Magento\Framework\Controller\Result {
+    if (!\class_exists(RawFactory::class, false)) {
+        class RawFactory
+        {
+            /**
+             * @param array<string, mixed> $data
+             */
+            public function create(array $data = []): Raw
+            {
+                return new Raw();
+            }
+        }
+    }
+}
+
 namespace Magento\Quote\Model\Quote\Address\RateResult {
     if (!\class_exists(ErrorFactory::class, false)) {
         class ErrorFactory

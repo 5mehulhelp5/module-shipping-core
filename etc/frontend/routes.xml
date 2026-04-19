@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!--
+    Copyright © Shubo. All rights reserved.
+    See LICENSE file for license details.
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
+    <router id="standard">
+        <route id="shubo_shipping" frontName="shubo_shipping">
+            <module name="Shubo_ShippingCore"/>
+        </route>
+    </router>
+</config>
