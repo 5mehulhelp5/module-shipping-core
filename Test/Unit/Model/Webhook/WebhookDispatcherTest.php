@@ -87,7 +87,7 @@ class WebhookDispatcherTest extends TestCase
         $this->guard = new WebhookIdempotencyGuard($this->eventRepository);
 
         $this->eventFactory->method('create')->willReturnCallback(
-            fn (): ShipmentEventInterface => (new \Shubo\ShippingCore\Api\Data\ShipmentEventInterfaceFactory())->create(),
+            fn (): ShipmentEventInterface => new \Shubo\ShippingCore\Test\Unit\Fake\InMemoryShipmentEvent(),
         );
 
         $this->savedEvents = [];
