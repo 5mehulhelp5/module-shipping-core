@@ -26,22 +26,17 @@
     <preference for="Shubo\ShippingCore\Api\Data\Search\ShipmentSearchResultsInterface"
                 type="Shubo\ShippingCore\Model\Data\ShipmentSearchResults"/>
 
+    <!-- Phase 4 completion: shipment-event persistence layer -->
+    <preference for="Shubo\ShippingCore\Api\Data\ShipmentEventInterface"
+                type="Shubo\ShippingCore\Model\Data\ShipmentEvent"/>
+    <preference for="Shubo\ShippingCore\Api\ShipmentEventRepositoryInterface"
+                type="Shubo\ShippingCore\Model\Shipment\ShipmentEventRepository"/>
+
     <!-- Phase 6: Rate quote service (carrier-agnostic aggregator) -->
     <preference for="Shubo\ShippingCore\Api\RateQuoteServiceInterface"
                 type="Shubo\ShippingCore\Model\Carrier\RateQuoteService"/>
 
-    <!--
-        Phase 5a: Tracking poller.
-
-        TODO(Phase 5b / Phase 4 gap): the concrete
-        Shubo\ShippingCore\Api\ShipmentEventRepositoryInterface implementation
-        and Shubo\ShippingCore\Model\Data\ShipmentEvent are not yet in this
-        module. A follow-up task must land
-        `Shubo\ShippingCore\Model\Shipment\ShipmentEventRepository` plus the
-        concrete ShipmentEvent AbstractModel + resource before the cron can
-        execute at runtime. See design doc §7.12. Unit tests cover the poller
-        via interface mocks, which is why this phase is still shippable.
-    -->
+    <!-- Phase 5a: Tracking poller. -->
     <preference for="Shubo\ShippingCore\Api\TrackingPollerInterface"
                 type="Shubo\ShippingCore\Model\Tracking\TrackingPoller"/>
 

@@ -2,15 +2,6 @@
 /**
  * Copyright © Shubo. All rights reserved.
  * See LICENSE file for license details.
- *
- * TODO(Phase 5b / Phase 4 gap): The concrete
- * {@see \Shubo\ShippingCore\Api\ShipmentEventRepositoryInterface} implementation
- * (Model/Shipment/ShipmentEventRepository) and
- * {@see \Shubo\ShippingCore\Model\Data\ShipmentEvent} are not yet in the
- * repository. Runtime wiring for this poller depends on both. Unit tests
- * cover the poller via interface mocks; a follow-up task must land the
- * concrete implementations and a `<preference>` entry in etc/di.xml before
- * the cron can execute in production. See design doc §7.12.
  */
 
 declare(strict_types=1);

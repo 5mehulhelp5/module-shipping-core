@@ -95,6 +95,21 @@ namespace Shubo\ShippingCore\Model\ResourceModel\Shipment {
     }
 }
 
+namespace Shubo\ShippingCore\Model\ResourceModel\ShipmentEvent {
+    if (!\class_exists(CollectionFactory::class, false)) {
+        class CollectionFactory
+        {
+            /**
+             * @param array<string, mixed> $data
+             */
+            public function create(array $data = []): object
+            {
+                return new \stdClass();
+            }
+        }
+    }
+}
+
 namespace Shubo\ShippingCore\Api\Data {
     if (!\class_exists(ShipmentEventInterfaceFactory::class, false)) {
         /**
