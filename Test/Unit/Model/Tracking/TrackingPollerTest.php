@@ -681,8 +681,7 @@ class TrackingPollerTest extends TestCase
 
     private function buildFreshEvent(): ShipmentEventInterface
     {
-        $factory = new \Shubo\ShippingCore\Api\Data\ShipmentEventInterfaceFactory();
-        return $factory->create();
+        return new \Shubo\ShippingCore\Test\Unit\Fake\InMemoryShipmentEvent();
     }
 
     private function assertEventFired(string $name): void
