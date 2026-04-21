@@ -26,6 +26,7 @@ use Magento\Ui\Component\Listing\Columns\Column;
  */
 class ShipmentActions extends Column
 {
+    private const ROUTE_VIEW = 'shubo_shipping_admin/shipments/view';
     private const ROUTE_DELIVERED = 'shubo_shipping_admin/shipments/markDelivered';
     private const ROUTE_RETURNED = 'shubo_shipping_admin/shipments/markReturned';
     private const ROUTE_COD = 'shubo_shipping_admin/shipments/markCodReconciled';
@@ -67,6 +68,13 @@ class ShipmentActions extends Column
             }
 
             $items[$index][$name] = [
+                'view' => [
+                    'href'    => $this->urlBuilder->getUrl(
+                        self::ROUTE_VIEW,
+                        ['shipment_id' => $shipmentId],
+                    ),
+                    'label'   => __('View'),
+                ],
                 'mark_delivered' => [
                     'href'    => $this->urlBuilder->getUrl(
                         self::ROUTE_DELIVERED,

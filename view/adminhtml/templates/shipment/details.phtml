@@ -1,0 +1,135 @@
+<?php
+/**
+ * Copyright © Shubo. All rights reserved.
+ * See LICENSE file for license details.
+ *
+ * @var \Shubo\ShippingCore\Block\Adminhtml\Shipment\ViewDetails $block
+ * @var \Magento\Framework\Escaper $escaper
+ */
+
+declare(strict_types=1);
+
+$shipment = $block->getShipment();
+if ($shipment === null) {
+    echo $escaper->escapeHtml((string)__('Shipment not available.'));
+    return;
+}
+
+$events = $block->getEvents();
+$address = $block->getDeliveryAddress();
+?>
+<div class="shubo-shipping-detail">
+    <h2><?= $escaper->escapeHtml((string)__('Shipment #%1', (string)$shipment->getShipmentId())) ?></h2>
+
+    <table class="admin__table-secondary shubo-shipping-summary">
+        <tbody>
+            <tr>
+                <th><?= $escaper->escapeHtml((string)__('Status')) ?></th>
+                <td>
+                    <span class="grid-severity <?= $escaper->escapeHtmlAttr($block->getStatusBadgeClass()) ?>">
+                        <span><?= $escaper->escapeHtml($shipment->getStatus()) ?></span>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <th><?= $escaper->escapeHtml((string)__('Carrier')) ?></th>
+                <td><?= $escaper->escapeHtml($shipment->getCarrierCode()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $escaper->escapeHtml((string)__('Carrier tracking')) ?></th>
+                <td><?= $escaper->escapeHtml($shipment->getCarrierTrackingId() ?? (string)__('(not yet assigned)')) ?></td>
+            </tr>
+            <tr>
+                <th><?= $escaper->escapeHtml((string)__('Client tracking (idempotency key)')) ?></th>
+                <td><code><?= $escaper->escapeHtml($shipment->getClientTrackingCode()) ?></code></td>
+            </tr>
+            <tr>
+                <th><?= $escaper->escapeHtml((string)__('Order ID')) ?></th>
+                <td><?= (int)$shipment->getOrderId() ?></td>
+            </tr>
+            <tr>
+                <th><?= $escaper->escapeHtml((string)__('Merchant ID')) ?></th>
+                <td><?= (int)$shipment->getMerchantId() ?></td>
+            </tr>
+            <tr>
+                <th><?= $escaper->escapeHtml((string)__('COD')) ?></th>
+                <td>
+                    <?php if ($shipment->isCodEnabled()): ?>
+                        <?= $escaper->escapeHtml(
+                            (string)__('%1 GEL', $block->formatMoneyTetri($shipment->getCodAmountCents())),
+                        ) ?>
+                    <?php else: ?>
+                        —
+                    <?php endif; ?>
+                </td>
+            </tr>
+            <tr>
+                <th><?= $escaper->escapeHtml((string)__('Parcel')) ?></th>
+                <td>
+                    <?= (int)$shipment->getParcelWeightGrams() ?> g,
+                    <?= $escaper->escapeHtml(
+                        (string)__('declared %1 GEL', $block->formatMoneyTetri($shipment->getParcelValueCents())),
+                    ) ?>
+                </td>
+            </tr>
+            <tr>
+                <th><?= $escaper->escapeHtml((string)__('Created')) ?></th>
+                <td><?= $escaper->escapeHtml($shipment->getCreatedAt() ?? '') ?></td>
+            </tr>
+            <tr>
+                <th><?= $escaper->escapeHtml((string)__('Updated')) ?></th>
+                <td><?= $escaper->escapeHtml($shipment->getUpdatedAt() ?? '') ?></td>
+            </tr>
+            <?php if ($address !== []): ?>
+                <tr>
+                    <th><?= $escaper->escapeHtml((string)__('Delivery address')) ?></th>
+                    <td>
+                        <?= $escaper->escapeHtml((string)($address['name'] ?? '')) ?><br/>
+                        <?= $escaper->escapeHtml((string)($address['phone'] ?? '')) ?><br/>
+                        <?= $escaper->escapeHtml((string)($address['street'] ?? '')) ?><br/>
+                        <?= $escaper->escapeHtml((string)($address['city'] ?? '')) ?>,
+                        <?= $escaper->escapeHtml((string)($address['country'] ?? '')) ?>
+                    </td>
+                </tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
+
+    <h3 style="margin-top:2em"><?= $escaper->escapeHtml((string)__('Event timeline')) ?></h3>
+    <?php if ($events === []): ?>
+        <p><?= $escaper->escapeHtml((string)__('No events recorded for this shipment.')) ?></p>
+    <?php else: ?>
+        <table class="admin__table-primary shubo-shipping-events">
+            <thead>
+                <tr>
+                    <th><?= $escaper->escapeHtml((string)__('Received')) ?></th>
+                    <th><?= $escaper->escapeHtml((string)__('Event type')) ?></th>
+                    <th><?= $escaper->escapeHtml((string)__('Source')) ?></th>
+                    <th><?= $escaper->escapeHtml((string)__('Carrier status')) ?></th>
+                    <th><?= $escaper->escapeHtml((string)__('Normalized status')) ?></th>
+                    <th><?= $escaper->escapeHtml((string)__('Occurred')) ?></th>
+                    <th><?= $escaper->escapeHtml((string)__('External event ID')) ?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($events as $event): ?>
+                    <tr>
+                        <td><?= $escaper->escapeHtml($event->getReceivedAt() ?? '') ?></td>
+                        <td><?= $escaper->escapeHtml($event->getEventType()) ?></td>
+                        <td><?= $escaper->escapeHtml($event->getSource()) ?></td>
+                        <td><?= $escaper->escapeHtml($event->getCarrierStatusRaw() ?? '—') ?></td>
+                        <td><?= $escaper->escapeHtml($event->getNormalizedStatus() ?? '—') ?></td>
+                        <td><?= $escaper->escapeHtml($event->getOccurredAt() ?? '—') ?></td>
+                        <td><code><?= $escaper->escapeHtml($event->getExternalEventId() ?? '—') ?></code></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    <?php endif; ?>
+
+    <p style="margin-top:1em">
+        <a href="<?= $escaper->escapeUrl($block->getUrl('shubo_shipping_admin/shipments/index')) ?>">
+            &larr; <?= $escaper->escapeHtml((string)__('Back to Shipments')) ?>
+        </a>
+    </p>
+</div>

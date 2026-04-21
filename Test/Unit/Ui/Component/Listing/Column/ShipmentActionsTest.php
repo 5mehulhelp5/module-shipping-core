@@ -96,9 +96,48 @@ class ShipmentActionsTest extends TestCase
             $actions['mark_cancelled']['href'],
         );
 
-        foreach ($actions as $action) {
-            $this->assertArrayHasKey('confirm', $action, 'All row actions must carry a confirm dialog.');
+        // Every ACTION that mutates state must carry a confirm dialog;
+        // the read-only "view" action is exempt (no state change → no
+        // consequence to confirm). The mutating actions are the four
+        // mark_* ones — check them explicitly instead of iterating
+        // over every row entry.
+        foreach (['mark_delivered', 'mark_returned', 'mark_cod_reconciled', 'mark_cancelled'] as $mutating) {
+            $this->assertArrayHasKey(
+                'confirm',
+                $actions[$mutating],
+                sprintf('Mutating row action %s must carry a confirm dialog.', $mutating),
+            );
         }
+    }
+
+    public function testPrepareDataSourceIncludesViewAction(): void
+    {
+        $dataSource = [
+            'data' => [
+                'items' => [['shipment_id' => 42]],
+            ],
+        ];
+
+        $this->urlBuilder
+            ->method('getUrl')
+            ->willReturnCallback(
+                fn (string $route, array $params): string => $route . '?id=' . (string)$params['shipment_id'],
+            );
+
+        $processed = $this->column->prepareDataSource($dataSource);
+        $actions = $processed['data']['items'][0]['actions'];
+
+        self::assertArrayHasKey('view', $actions);
+        self::assertStringContainsString(
+            'shubo_shipping_admin/shipments/view',
+            $actions['view']['href'],
+        );
+        self::assertSame('View', (string)$actions['view']['label']);
+        self::assertArrayNotHasKey(
+            'confirm',
+            $actions['view'],
+            'View is read-only; no confirm dialog is required.',
+        );
     }
 
     public function testPrepareDataSourceSkipsRowsWithInvalidId(): void

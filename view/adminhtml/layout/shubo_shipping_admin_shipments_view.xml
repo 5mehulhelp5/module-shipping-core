@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!--
+    Copyright © Shubo. All rights reserved.
+    See LICENSE file for license details.
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      layout="admin-1column"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <title>Shubo Shipping — Shipment Detail</title>
+    </head>
+    <body>
+        <referenceContainer name="content">
+            <block class="Shubo\ShippingCore\Block\Adminhtml\Shipment\ViewDetails"
+                   name="shubo.shipping.shipment.details"
+                   template="Shubo_ShippingCore::shipment/details.phtml"/>
+        </referenceContainer>
+    </body>
+</page>
