@@ -27,8 +27,6 @@ use Shubo\ShippingCore\Api\ShipmentRepositoryInterface;
 use Shubo\ShippingCore\Test\Integration\Model\Resilience\Fixtures\EventCapture;
 use Shubo\ShippingCore\Test\Unit\Fake\FakeCarrierGateway;
 
-require_once __DIR__ . '/../Model/Resilience/_fixtures/EventCapture.php';
-
 // Real-Magento smoke test following the same direct-bootstrap pattern as
 // CircuitBreakerIntegrationTest — we do not use Magento's TestFramework
 // integration runner (which reinstalls a throwaway DB on every run). That

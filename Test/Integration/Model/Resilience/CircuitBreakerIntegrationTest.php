@@ -22,8 +22,6 @@ use Shubo\ShippingCore\Api\Data\CircuitBreakerStateInterface;
 use Shubo\ShippingCore\Model\Resilience\CircuitBreakerStateRepository;
 use Shubo\ShippingCore\Test\Integration\Model\Resilience\Fixtures\EventCapture;
 
-require_once __DIR__ . '/_fixtures/EventCapture.php';
-
 // Like RateLimiterConcurrencyTest this is a real-Magento smoke test that boots
 // the installed duka instance directly — we are not running through Magento's
 // integration test framework (which reinstalls a throwaway DB on every run).
