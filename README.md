@@ -1,6 +1,8 @@
 # Shubo_ShippingCore
 
 [![CI](https://github.com/nshubitidze/module-shipping-core/actions/workflows/ci.yml/badge.svg)](https://github.com/nshubitidze/module-shipping-core/actions/workflows/ci.yml)
+[![Packagist](https://img.shields.io/badge/packagist-shubo%2Fmodule--shipping--core-orange.svg)](https://packagist.org/packages/shubo/module-shipping-core)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](./LICENSE)
 
 Carrier-agnostic shipping orchestration framework for Magento 2 marketplaces and multi-vendor stores.
 
