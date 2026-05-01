@@ -75,9 +75,11 @@
         <arguments>
             <argument name="gateways" xsi:type="array">
                 <item name="shuboflat" xsi:type="object">Shubo\ShippingCore\Model\Carrier\FlatRateGateway</item>
+                <item name="shubopickup" xsi:type="object">Shubo\ShippingCore\Model\Carrier\PickupInStoreGateway</item>
             </argument>
             <argument name="capabilities" xsi:type="array">
                 <item name="shuboflat" xsi:type="object">Shubo\ShippingCore\Model\Carrier\FlatRateCapabilities</item>
+                <item name="shubopickup" xsi:type="object">Shubo\ShippingCore\Model\Carrier\PickupInStoreCapabilities</item>
             </argument>
         </arguments>
     </type>
